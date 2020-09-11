@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="test_out" class="main.java.dao.output">
+        <constructor-arg> <!--构造器注入-->
+            <value>更好的世界</value>
+        </constructor-arg>
+    </bean>
+
+    <bean id="test_aspect" class="main.java.dao.tool"/><!--一个普通的切面类-->
+
+
+    <aop:config>
+        <aop:aspect id="one" ref="test_aspect">
+            <aop:pointcut id="one_p" expression="execution(* main.java.dao.*.*(..))"/><!--关联代理类-->
+            <aop:after method="p" pointcut-ref="one_p"/><!--如果前面的excution参数输入错误很容易出错-->
+        </aop:aspect>
+
+    </aop:config>
+
+</beans>
