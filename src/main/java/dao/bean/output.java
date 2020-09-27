@@ -1,4 +1,4 @@
-package main.java.dao;
+package main.java.dao.bean;
 
 public class output {
     private String s;

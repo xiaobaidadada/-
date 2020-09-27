@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--这个文档声明类型不能忽略-->
+<!--xmlns="http://mybatis.org/schema/mybatis-mapper"不能用这个，要用namespace-->
+<mapper namespace="test">
+    <select id="selectuserid" resultType="main.java.dao.mybatis.persion">
+        select * from user
+    </select>
+</mapper>

@@ -3,21 +3,54 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop https://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <bean id="test_out" class="main.java.dao.output">
+    <bean id="test_out" class="main.java.dao.bean.output">
         <constructor-arg> <!--构造器注入-->
             <value>更好的世界</value>
         </constructor-arg>
     </bean>
 
-    <bean id="test_aspect" class="main.java.dao.tool"/><!--一个普通的切面类-->
+    <bean id="test_aspect" class="main.java.dao.bean.tool"/><!--一个普通的切面类-->
 
-
-    <aop:config>
-        <aop:aspect id="one" ref="test_aspect">
-            <aop:pointcut id="one_p" expression="execution(* main.java.dao.*.*(..))"/><!--关联代理类-->
-            <aop:after method="p" pointcut-ref="one_p"/><!--如果前面的excution参数输入错误很容易出错-->
+    <aop:config><!--aop的配置-->
+        <aop:aspect id="one" ref="test_aspect"><!--一个切面配置，一个切面关联着一个类-->
+            <aop:pointcut id="one_p" expression="execution(* main.java.dao.bean.*.*(..))"/><!--关联代理类，其中的函数“算”是一个切入点-->
+            <aop:after method="p" pointcut-ref="one_p"/><!--通知，如果前面的excution参数输入错误很容易出错-->
+            <!--通知包括，通知函数(有好几个顺序位置)，通知到切面中的某个函数-->
         </aop:aspect>
-
     </aop:config>
+
+
+    <!--数据库持久化-->
+    <!--dbcp数据源配置-->
+    <bean id="dSorce" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/专升本?serverTimezone=UTC "/>
+        <property name="username" value="root"></property>
+        <property name="password" value="baizc192837465"></property>
+        <!--最大链接数-->
+        <property name="maxTotal" value="30"></property>
+        <property name="maxIdle" value="10"></property>
+        <property name="initialSize" value="5"/>
+    </bean>
+
+    <!--配置mybatis工厂bean，等于是为sql会话工厂添加连接池的数据源-->
+    <bean id="sqlsessionfactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dSorce"/>
+        <property name="configLocation"
+                  value="main/resources/mybatis.xml"/><!--这个配置的name不能修改，这个是关联mybatis的路径的。classpath:main-->
+    </bean>
+
+    <bean id="sqltest" class="main.java.dao.mybatis.service">
+        <property name="sqlSessionFactory" ref="sqlsessionfactory">
+        </property>
+    </bean>
+
+
+    <!--mybatis的扫描器模式-->
+    <!-- Mapper 扫描器 -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!-- 扫描 cn.wmyskxz.mapper 包下的组件 -->
+        <property name="basePackage" value="main.java.dao.mybatis"/>
+    </bean>
 
 </beans>
